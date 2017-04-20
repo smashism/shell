@@ -1,10 +1,10 @@
-#! /bin/bash
+#!/bin/bash
 
-gam="python $HOME/Documents/gam/gam.py" #set this to the location of your GAM binaries
+gam="/path/to/bin/gam/gam" #set this to the location of your GAM binaries (updated for gam4 -ek)
 start_date=`date +%Y-%m-%d` # sets date for vacation message in proper formate   
 end_date=`date -v+90d +%Y-%m-%d` #adds 90 days to todays date for vacation message
 newuser(){
-   echo "     gApps Admin"
+   echo "     G Suite Admin" # reflecting new service name -ek
   read -p "Enter email address to admin: " email
     if [[ -z $email ]];
       then echo "Please enter an email address to proceed";
@@ -32,9 +32,11 @@ do
  echo "11. Show all calendars"
  echo "12. Mirror $email's Groups to another user"
  echo "13. Forward $email's Emails to another user"
- echo "14. Admin Another User"
- echo "15. Exit"
- echo "Please enter option [1 - 15]"
+ echo "14. Transfer $email's shared Drive files"
+ echo "15. Wipe $email's calendar"
+ echo "16. Admin another user"
+ echo "17. Exit"
+ echo "Please enter option [1 - 17]"
     read opt
     case $opt in
      1) echo "************ Set Vacation Message / Remove Forward *************";
@@ -144,16 +146,27 @@ do
          gam user $email forward on $forward keep
          echo "Emails are bing forwarded press [enter] key to continue. . .";
         read enterKey;;
-        
-     14) echo "************ Admin Another User ************";
+
+     14) echo "************ Transfer $email's shared Drive files to another user ************";
+         read -p  "Enter email address where shared Drive files should be transferred: " target;
+         gam create datatransfer $email gdrive $target privacy_level shared
+         echo "Emails are being forwarded press [enter] key to continue. . .";
+        read enterKey;;
+
+     15) echo "************ Wiping $email's calendar ************";
+        $gam calendar $email wipe
+        echo "Calendar for $email has been wiped, press [enter] key to continue. . .";
+        read enterKey;;
+
+     16) echo "************ Admin Another User ************";
         newuser;       
         echo "Press [enter] key to continue. . .";
         read enterKey;;
     
-     15) echo "Bye $USER";
+     17) echo "Bye $USER";
         exit 1;; 
         
-     *) echo "$opt is an invaild option. Please select option between 1-15 only"
+     *) echo "$opt is an invaild option. Please select option between 1-17 only"
        echo "Press [enter] key to continue. . .";
         read enterKey;;
 esac
